@@ -5,6 +5,7 @@ import { Produto } from 'app/models/produtos'
 import { converterEmBigDecimal } from 'app/util/money'
 import { Alert } from 'components/common/message'
 import * as yup from 'yup'
+import Link from 'next/link'
 
 const msgCampoObrigatorio = "Campo Obrigatorio";
 
@@ -14,6 +15,13 @@ const validationSchema = yup.object().shape({
   preco: yup.number().required(msgCampoObrigatorio).moreThan(0, "Valor deve ser maior que 0,00(ZERO)"),
   descricao: yup.string().trim().required(msgCampoObrigatorio)
 })
+
+interface FormErros {
+  sku?: string;
+  nome?: string;
+  preco?: string;
+  descricao?: string;
+}
 
 export const CadastroProdutos: React.FC = () => {
 
@@ -25,11 +33,14 @@ export const CadastroProdutos: React.FC = () => {
   const [ id, setId ] = useState<string>('')
   const [ cadastro, setCadastro ] = useState<string>('')
   const [ messages, setMessages ] = useState<Array<Alert>>([])
+  const [ erros, setErros ] = useState<FormErros>({}) 
 
   const submit = () => {
     const produto: Produto = {id, sku,preco: converterEmBigDecimal(preco) , nome, descricao }
 
     validationSchema.validate(produto).then(obj => {
+      setErros({})
+
       if(id){
         service.atualizar(produto).then(response => {setMessages([{
           tipo: "success", texto: "Produto atualizado com sucesso!"
@@ -48,9 +59,10 @@ export const CadastroProdutos: React.FC = () => {
       const field = err.path;
       const message = err.message;
 
-      setMessages([{
-        tipo: "danger", field, texto: message
-      }])
+      setErros({
+        [field]: message
+      })
+
     })
 
   }
@@ -70,15 +82,15 @@ export const CadastroProdutos: React.FC = () => {
       
       <div className="columns">
 
-        <Input label="SKU: *" columnClasses="is-half" onChange={setSku} value={sku} id="inputSku" placeholder="Digite o SKU do produto" /> 
+        <Input label="SKU: *" columnClasses="is-half" onChange={setSku} value={sku} id="inputSku" placeholder="Digite o SKU do produto" error={erros.sku}/> 
 
-        <Input label="Preço: *" columnClasses="is-half" onChange={setPreco} value={preco} id="inputPreco" placeholder="Digite o Preço do produto" currency maxLength={16}/>
+        <Input label="Preço: *" columnClasses="is-half" onChange={setPreco} value={preco} id="inputPreco" placeholder="Digite o Preço do produto" currency maxLength={16} error={erros.preco} />
 
       </div>  
 
       <div className="columns">
 
-        <Input label="Nome: *" columnClasses="is-full" onChange={setNome} value={nome} id="inputNome" placeholder="Digite o Nome do produto" />
+        <Input label="Nome: *" columnClasses="is-full" onChange={setNome} value={nome} id="inputNome" placeholder="Digite o Nome do produto" error= {erros.nome} />
 
       </div>
 
@@ -88,6 +100,7 @@ export const CadastroProdutos: React.FC = () => {
           <div className="control">
             <textarea className="textarea" id="inputDescricao" value={descricao} onChange={event => setDescricao(event.target.value)}
               placeholder="Digite o Descrição detalhada do produto" />
+            { erros.descricao && <p className= "help is-danger" >{erros.descricao}</p> }  
           </div>
         </div>
       </div>  
@@ -104,7 +117,9 @@ export const CadastroProdutos: React.FC = () => {
         </div>
 
         <div className="control">
-          <button className="button is-link is-light">Voltar</button>
+          <Link href="/consultas/produtos">
+            <button className="button is-link is-light">Voltar</button>
+          </Link>  
         </div>
       </div>
     </Layout>
