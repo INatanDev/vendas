@@ -1,11 +1,12 @@
-import { useState } from 'react'
-import { Layout, Input, Message } from 'components'
+import { useState, useEffect } from 'react'
+import { Layout, Input, InputMoney } from 'components'
 import { useProdutoService } from 'app/services'
 import { Produto } from 'app/models/produtos'
-import { converterEmBigDecimal } from 'app/util/money'
+import { converterEmBigDecimal, formatReal } from 'app/util/money'
 import { Alert } from 'components/common/message'
 import * as yup from 'yup'
 import Link from 'next/link'
+import { useRouter } from 'next/router' 
 
 const msgCampoObrigatorio = "Campo Obrigatorio";
 
@@ -34,6 +35,21 @@ export const CadastroProdutos: React.FC = () => {
   const [ cadastro, setCadastro ] = useState<string>('')
   const [ messages, setMessages ] = useState<Array<Alert>>([])
   const [ erros, setErros ] = useState<FormErros>({}) 
+  const router = useRouter();
+  const { id:queryId } = router.query;
+
+  useEffect( () => {
+    if(queryId){
+      service.carregarProduto(queryId).then(produtoEncontrado => {
+        setId(produtoEncontrado.id || '')
+        setSku(produtoEncontrado.sku || '')
+        setNome(produtoEncontrado.nome || '')
+        setDescricao(produtoEncontrado.descricao || '')
+        setCadastro(produtoEncontrado.cadastro || '')
+        setPreco(formatReal(`${produtoEncontrado.preco}`))
+      })
+    }
+  } , [queryId] )
 
   const submit = () => {
     const produto: Produto = {id, sku,preco: converterEmBigDecimal(preco) , nome, descricao }
@@ -82,15 +98,15 @@ export const CadastroProdutos: React.FC = () => {
       
       <div className="columns">
 
-        <Input label="SKU: *" columnClasses="is-half" onChange={setSku} value={sku} id="inputSku" placeholder="Digite o SKU do produto" error={erros.sku}/> 
+        <Input label="SKU: *" columnClasses="is-half" onChange={ e => setSku(e.target.value) } value={sku} id="inputSku" placeholder="Digite o SKU do produto" error={erros.sku}/> 
 
-        <Input label="Preço: *" columnClasses="is-half" onChange={setPreco} value={preco} id="inputPreco" placeholder="Digite o Preço do produto" currency maxLength={16} error={erros.preco} />
+        <InputMoney label="Preço: *" columnClasses="is-half" onChange={ e => setPreco(e.target.value) } value={preco} id="inputPreco" placeholder="Digite o Preço do produto" maxLength={16} error={erros.preco} />
 
       </div>  
 
       <div className="columns">
 
-        <Input label="Nome: *" columnClasses="is-full" onChange={setNome} value={nome} id="inputNome" placeholder="Digite o Nome do produto" error= {erros.nome} />
+        <Input label="Nome: *" columnClasses="is-full" onChange={ e => setNome(e.target.value) } value={nome} id="inputNome" placeholder="Digite o Nome do produto" error= {erros.nome} />
 
       </div>
 

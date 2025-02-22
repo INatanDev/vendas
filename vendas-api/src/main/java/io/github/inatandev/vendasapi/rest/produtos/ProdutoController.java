@@ -20,8 +20,19 @@ public class ProdutoController {
     private ProdutoRepository repository;
 
     @GetMapping
-    public List<ProdutoFormRequest> getList(){
+    public List<ProdutoFormRequest> getList() {
         return repository.findAll().stream().map( ProdutoFormRequest :: fromModel ).collect(Collectors.toList());
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<ProdutoFormRequest> getById(@PathVariable Long id){
+        Optional<Produto> produtoExistente = repository.findById(id);
+        if(produtoExistente.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        var produto = produtoExistente.map(ProdutoFormRequest::fromModel).get();
+        return ResponseEntity.ok(produto);
     }
 
     @PostMapping
@@ -46,5 +57,17 @@ public class ProdutoController {
         repository.save(entity);
 
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id){
+        Optional<Produto> produtoExistente = repository.findById(id);
+
+        if (produtoExistente.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        repository.delete(produtoExistente.get());
+        return ResponseEntity.noContent().build();
     }
 }
