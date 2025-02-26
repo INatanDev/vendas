@@ -3,6 +3,8 @@ package io.github.inatandev.vendasapi.rest.clientes;
 import io.github.inatandev.vendasapi.model.Cliente;
 import io.github.inatandev.vendasapi.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,9 +60,11 @@ public class ClienteController {
     }
 
     @GetMapping
-    public List<ClienteFormRequest> getLista(){
-        return repository.findAll().stream()
-                .map( ClienteFormRequest :: fromModel)
-                .collect(Collectors.toList());
+    public Page<ClienteFormRequest> getLista(
+            @RequestParam(value = "nome", required = false, defaultValue = "") String nome,
+            @RequestParam(value = "cpf", required = false, defaultValue = "") String cpf,
+            Pageable pageable
+    ){
+        return repository.buscarPorCpfNome("%" + nome + "%", "%" + cpf + "%", pageable).map(ClienteFormRequest::fromModel);
     }
 }

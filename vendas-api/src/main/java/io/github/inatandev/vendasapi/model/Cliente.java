@@ -87,6 +87,11 @@ public class Cliente {
     public Cliente() {
     }
 
+    @PrePersist
+    public void prePersist(){
+        setDataCadastro(LocalDate.now());
+    }
+
     public Cliente(Long id, LocalDate nascimento, String cpf, String nome, String endereco, String telefone, String email, LocalDate dataCadastro) {
         this.id = id;
         this.nascimento = nascimento;

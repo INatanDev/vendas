@@ -1,5 +1,6 @@
 package io.github.inatandev.vendasapi.rest.clientes;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.inatandev.vendasapi.model.Cliente;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ public class ClienteFormRequest {
     private String email;
     private String telefone;
     private String endereco;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataNascimento;
     private LocalDate cadastro;
 
@@ -94,7 +96,7 @@ public class ClienteFormRequest {
     }
 
     public Cliente toModel(){
-        return new Cliente(id, dataNascimento, nome, cpf, email, telefone, endereco, cadastro);
+        return new Cliente(id, dataNascimento, cpf, nome, endereco, telefone, email, cadastro);
     }
 
     public static ClienteFormRequest fromModel(Cliente cliente){
