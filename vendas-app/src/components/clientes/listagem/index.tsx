@@ -9,7 +9,6 @@ import { Page } from 'app/models/common/page'
 import { useClienteService } from 'app/services/'
 import { Button } from 'primereact/button'
 import Router from 'next/router'
-import { confirmDialog  } from 'primereact/confirmdialog';
 
 interface ConsultaClientesForm{
   nome?: string;
@@ -26,7 +25,7 @@ export const ListagemClientes: React.FC = () => {
     content: [],
     first: 0,
     number: 0,
-    size: 5,
+    size: 10,
     totalElements: 0
   });
 
@@ -49,7 +48,6 @@ export const ListagemClientes: React.FC = () => {
   }
 
   const deletar = (cliente: Cliente) => {
-    console.log("entrou no deletar")
     service.deletar(cliente.id).then(result => {
       handlePage(null)
     })
@@ -60,17 +58,8 @@ export const ListagemClientes: React.FC = () => {
     return (
       <div>
         <Button label="Editar" onClick={e => Router.push( url ) } className="p-button-rounded p-button-info" />
-        <Button label="Deletar" onClick={ event => { 
-          confirmDialog({
-            message: "Confirma a exclusão deste registro?",
-            acceptLabel: "Sim",
-            rejectLabel: "Não",
-            accept: () => deletar(registro),
-            header: "Confirmação"
-          }) 
-          console.log(event.currentTarget)
-        }}
-        className="p-button-rounded p-button-danger" />
+        <Button label="Deletar" onClick={e => deletar( registro ) }
+                        className="p-button-rounded p-button-danger" /> 
       </div>
     )
   }
@@ -82,10 +71,17 @@ export const ListagemClientes: React.FC = () => {
           <Input id="nome" name="nome" autoComplete="off" columnClasses="is-half" onChange={handleChange} value={filtro.nome} label="nome" />
           <InputCPF id="cpf" name="cpf" autoComplete="off" columnClasses="is-half" onChange={handleChange} value={filtro.cpf} label="cpf" />
         </div>
+
         <div className="field is-grouped" >
           <div className="control is link" >
             <button type="submit" className="button is-success" >
               Consultar
+            </button>
+          </div>
+
+          <div className="control is link" >
+            <button type="submit" onClick={e => Router.push("/cadastros/clientes")} className="button is-warning" >
+              Novo
             </button>
           </div>
         </div>
@@ -99,7 +95,7 @@ export const ListagemClientes: React.FC = () => {
           style={{ width: '100%' }} 
           totalRecords={clientes.totalElements} 
           lazy paginator first={clientes.first}
-          rows={clientes.size} onPage={handlePage} loading={loading} emptyMessage="Nenhum registro." dataKey="id"   >
+          rows={clientes.size} onPage={handlePage} loading={loading} emptyMessage="Nenhum registro." dataKey="id" >
             <Column field="id" header="Código" />
             <Column field="nome" header="Nome" />
             <Column field="cpf" header="CPF" />
