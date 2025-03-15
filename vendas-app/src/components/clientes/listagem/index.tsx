@@ -2,13 +2,15 @@ import { Cliente } from 'app/models/clientes';
 import { Layout } from 'components'
 import { Input, InputCPF } from 'components'
 import { useFormik } from 'formik'
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { DataTable, DataTableStateEvent } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Page } from 'app/models/common/page'
 import { useClienteService } from 'app/services/'
 import { Button } from 'primereact/button'
 import Router from 'next/router'
+import { Toast } from 'primereact/toast';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog'
 
 interface ConsultaClientesForm{
   nome?: string;
@@ -20,6 +22,8 @@ export const ListagemClientes: React.FC = () => {
   const service = useClienteService();
 
   const [loading, setLoading] = useState<boolean>(false)
+
+  const toast = useRef<Toast>(null);
 
   const [clientes, setClientes] = useState<Page<Cliente>>({
     content: [],
@@ -58,13 +62,24 @@ export const ListagemClientes: React.FC = () => {
     return (
       <div>
         <Button label="Editar" onClick={e => Router.push( url ) } className="p-button-rounded p-button-info" />
-        <Button label="Deletar" onClick={e => deletar( registro ) }
-                        className="p-button-rounded p-button-danger" /> 
+        <Button label="Deletar" onClick={event => {confirmDialog({
+            message: "Confirma a exclusão deste registro?",
+            acceptLabel: "Sim",
+            rejectLabel: "Não",
+            accept: () => deletar(registro),
+            header: "Confirmação"
+          })
+        }} className="p-button-rounded p-button-danger" /> 
       </div>
     )
   }
 
   return (
+
+    <>
+    <Toast ref={toast} />
+    <ConfirmDialog />
+
     <Layout titulo="Clientes">
       <form onSubmit={formikSubmit}>
         <div className="columns">
@@ -105,5 +120,7 @@ export const ListagemClientes: React.FC = () => {
         </div>
       </div>
     </Layout>
+
+    </>
   )
 }

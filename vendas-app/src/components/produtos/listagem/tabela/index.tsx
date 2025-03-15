@@ -1,5 +1,10 @@
 import { Produto } from 'app/models/produtos'
-import { useState } from 'react';
+import { useRef } from 'react'
+import { DataTable } from 'primereact/datatable'
+import { Column } from 'primereact/column'
+import { Button } from 'primereact/button'
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog'
+import { Toast } from 'primereact/toast';
 
 interface TabelaProdutosProps {
   produtos: Array<Produto>;
@@ -12,69 +17,53 @@ export const TabelaProdutos: React.FC<TabelaProdutosProps> = ({
   onEdit,
   onDelete
 }) => {
-  return (
-    <table className="table is-striped is-hoverable">
-      <thead>
-        <tr>
-          <th>Codigo</th>
-          <th>SKU</th>
-          <th>nome</th>
-          <th>preco</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          produtos.map( produto => <ProdutosRow onDelete={onDelete} onEdit={onEdit} key={produto.id} produto= {produto} />)
-        }
-      </tbody>
-    </table>
-  )
-}
+  const toast = useRef<Toast>(null);
 
-interface ProdutoRowProps {
-  produto: Produto;
-  onEdit: (produto) => void;
-  onDelete: (produto) => void;
-}
-
-const ProdutosRow: React.FC<ProdutoRowProps> = ({
-  produto,
-  onEdit,
-  onDelete
-}) => {
-
-  const [deletando, setDeletando] = useState<boolean>(false)
-
-  const onDeleteClick = (produto: Produto) => {
-    if(deletando){
-      onDelete(produto)
-      setDeletando(false)
-    }else{
-      setDeletando(true)
-    }
+  const accept1 = () => {
+      toast.current?.show({ severity: 'info', summary: 'Confirmed', detail: 'Aceito a Confirmação!', life: 3000 });
   }
 
-  const cancelaDelete = () => setDeletando(false)
+  const reject = () => {
+    toast.current?.show({ severity: 'warn', summary: 'Rejected', detail: 'Voce rejeitou!', life: 3000 });
+  }
+
+  const confirmDelete = (registro: Produto) => {
+    confirmDialog({
+      message: "Confirma a exclusão deste registro?",
+      header: "Confirmação",
+      acceptLabel: "Sim",
+      rejectLabel: "Não",
+      accept: () => {onDelete(registro)},
+      reject
+    });
+  };
+
+  const actionTemplate = (registro: Produto) => {
+    const url = `/cadastros/produtos?id=${registro.id}`
+    return (
+    <>  
+      <div>
+        <Button label="Editar" onClick={e => onEdit(registro) } className="p-button-rounded p-button-info" />
+        <Button label="Deletar" className="p-button-rounded p-button-danger" 
+          onClick={ () => confirmDelete(registro) }
+        /> 
+      </div>
+    </>  
+    )
+  }
 
   return (
-    <tr>
-      <td>{produto.id}</td>
-      <td>{produto.sku}</td>
-      <td>{produto.nome}</td>
-      <td>{produto.preco}</td>
-      <td>
-        {
-          !deletando && 
-            <button onClick={e => onEdit(produto)} className="button is-success is-rounded is-small">Editar</button>
-        }
+    <>
+      <Toast ref={toast} />
+      <ConfirmDialog />
 
-        <button onClick={e => onDeleteClick(produto)} className="button is-danger is-rounded is-small"> {deletando ? "Confirma?" : "Deletar" } </button>
-
-        {
-          deletando && <button onClick={cancelaDelete} className="button is-rounded is-small">Cancelar</button>
-        }
-      </td>
-    </tr>
+      <DataTable value={produtos} paginator rows={5}>
+        <Column field="id" header = "Código" />
+        <Column field="sku" header = "SKU" />
+        <Column field="nome" header = "Nome" />
+        <Column field="preco" header = "Preço" />
+        <Column header = "" body={actionTemplate} />
+      </DataTable >  
+    </>
   )
 }
