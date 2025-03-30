@@ -22,7 +22,6 @@ export const CadastroCliente: React.FC = () => {
   }, [id])
 
   const handleSubmit = (cliente: Cliente) => {
-    console.log(cliente)
     if(cliente.id){
       service.atualizar(cliente).then(response => {
         setMensagem([{

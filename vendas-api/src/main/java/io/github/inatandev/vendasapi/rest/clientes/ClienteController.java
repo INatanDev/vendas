@@ -1,7 +1,7 @@
 package io.github.inatandev.vendasapi.rest.clientes;
 
 import io.github.inatandev.vendasapi.model.Cliente;
-import io.github.inatandev.vendasapi.repositories.ClienteRepository;
+import io.github.inatandev.vendasapi.model.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

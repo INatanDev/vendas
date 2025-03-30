@@ -44,6 +44,14 @@ public class Produto {
         this.preco = preco;
         this.sku = sku;
     }
+    public Produto(Long id, String nome, String descricao, BigDecimal preco, String sku, LocalDate cadastro) {
+        this.id = id;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.preco = preco;
+        this.sku = sku;
+        this.dataCadastro = cadastro;
+    }
 
     @PrePersist
     public void prePersist(){
@@ -98,6 +106,7 @@ public class Produto {
         this.dataCadastro = dataCadastro;
     }
 
+
     @Override
     public String toString() {
         return "Produto{" +
@@ -106,6 +115,7 @@ public class Produto {
                 ", descricao='" + descricao + '\'' +
                 ", preco=" + preco +
                 ", sku='" + sku + '\'' +
+                ", dataCadastro=" + dataCadastro +
                 '}';
     }
 }

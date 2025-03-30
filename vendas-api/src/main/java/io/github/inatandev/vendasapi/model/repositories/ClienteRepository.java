@@ -1,4 +1,4 @@
-package io.github.inatandev.vendasapi.repositories;
+package io.github.inatandev.vendasapi.model.repositories;
 
 import io.github.inatandev.vendasapi.model.Cliente;
 import org.springframework.data.domain.Page;

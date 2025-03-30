@@ -1,14 +1,13 @@
 package io.github.inatandev.vendasapi.rest.produtos;
 
 import io.github.inatandev.vendasapi.model.Produto;
-import io.github.inatandev.vendasapi.repositories.ProdutoRepository;
+import io.github.inatandev.vendasapi.model.repositories.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,7 +54,6 @@ public class ProdutoController {
         Produto entity = produto.toModel();
         entity.setId(id);
         repository.save(entity);
-
         return ResponseEntity.ok().build();
     }
 

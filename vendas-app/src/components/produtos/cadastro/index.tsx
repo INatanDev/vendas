@@ -52,15 +52,17 @@ export const CadastroProdutos: React.FC = () => {
   } , [queryId] )
 
   const submit = () => {
-    const produto: Produto = {id, sku,preco: converterEmBigDecimal(preco) , nome, descricao }
+    const produto: Produto = {id, sku,preco: converterEmBigDecimal(preco) , nome, descricao, cadastro }
 
     validationSchema.validate(produto).then(obj => {
       setErros({})
 
       if(id){
-        service.atualizar(produto).then(response => {setMessages([{
+        service.atualizar(produto).then(updatedProduto => {
+          setMessages([{
           tipo: "success", texto: "Produto atualizado com sucesso!"
-        }])})
+        }])
+      })
       }else{
   
         service.salvar(produto).then(produtoResposta => {
