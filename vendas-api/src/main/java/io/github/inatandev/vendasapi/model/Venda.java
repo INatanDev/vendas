@@ -2,6 +2,7 @@ package io.github.inatandev.vendasapi.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,9 @@ public class Venda {
 
     @Column
     private BigDecimal total;
+
+    @Column(name = "data_venda")
+    private LocalDateTime dataVenda;
 
     public Long getId() {
         return id;
@@ -64,6 +68,19 @@ public class Venda {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public LocalDateTime getDataVenda() {
+        return dataVenda;
+    }
+
+    public void setDataVenda(LocalDateTime dataVenda) {
+        this.dataVenda = dataVenda;
+    }
+
+    @PrePersist
+    public void prepersist(){
+        setDataVenda(LocalDateTime.now());
     }
 
     @Override
