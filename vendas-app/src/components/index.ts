@@ -5,3 +5,4 @@ export { Input, Message, Loader, InputMoney, InputCPF, InputTelefone, InputDate}
 export { CadastroCliente, ListagemClientes } from './clientes'
 export { RelatorioVendas } from './relatorios'
 export { Dashboard } from './dashboard'
+export { RotaAutenticada } from './rotaautenticada'
