@@ -23,9 +23,9 @@ O projeto **vendas** é um sistema para controle de vendas de produtos, criado p
 
 ## Tecnologias Utilizadas  
 - Back-end: Java  
-- Front-end: TypeScript ( React com Next.js)  
+- Front-end: TypeScript ( React )  
 - Estilo/CSS: CSS   
-- Banco de dados, frameworks etc. — (adicione aqui conforme usado: Spring Boot, Hibernate, etc.)  
+- Banco de dados, frameworks etc. — postgresql, spring boot, next.js
 - Gerenciamento de versões: Git  
 - Licença: MIT 
 
